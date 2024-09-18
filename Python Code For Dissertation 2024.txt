@@ -1,0 +1,560 @@
+import pandas as pd
+
+# Load the dataset
+local_file_path = r"D: \Data\Real_Estate.csv"
+real_estate_data = pd.read_csv(local_file_path)
+
+# Display the first few rows of the dataset
+real_estate_data_head = real_estate_data.head()
+
+# Display info about the dataset
+data_info = real_estate_data.info()
+
+print(real_estate_data_head)
+print(data_info)
+
+# Now, let’s have a look if the data contains any null values or not:
+
+print(real_estate_data.isnull().sum())
+
+# Descriptive statistics of the dataset
+descriptive_stats = real_estate_data.describe()
+
+print(descriptive_stats)
+
+# Creating graphs to plot different insights
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set the aesthetic style of the plots
+sns.set_style("whitegrid")
+
+# Create scatter plots to observe the relationship with house price
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 10))
+fig.suptitle('Scatter Plots with House Price', fontsize=16)
+
+# Scatter plot for each variable against the house price
+sns.scatterplot(data=real_estate_data, x='area', y='price', ax=axes[0, 0])
+sns.scatterplot(data=real_estate_data, x='bedrooms', y='price', ax=axes[0, 1])
+sns.scatterplot(data=real_estate_data, x='bathrooms', y='price', ax=axes[1, 0])
+sns.scatterplot(data=real_estate_data, x='stories', y='price', ax=axes[1, 1])
+
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+plt.show()
+
+# Creating further indepth graphs for more detailed insights
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set the aesthetic style of the plots
+sns.set_style("whitegrid")
+
+# Create subplots
+fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(12, 15))
+fig.suptitle('Plots with House Price', fontsize=16)
+
+# Scatter plot for numeric variables against the house price
+sns.scatterplot(data=real_estate_data, x='area', y='price', ax=axes[0, 0])
+axes[0, 0].set_title('Area vs Price')
+
+sns.scatterplot(data=real_estate_data, x='bedrooms', y='price', ax=axes[0, 1])
+axes[0, 1].set_title('Bedrooms vs Price')
+
+sns.scatterplot(data=real_estate_data, x='bathrooms', y='price', ax=axes[1, 0])
+axes[1, 0].set_title('Bathrooms vs Price')
+
+sns.scatterplot(data=real_estate_data, x='stories', y='price', ax=axes[1, 1])
+axes[1, 1].set_title('Stories vs Price')
+
+# Strip plots for categorical variables against the house price
+sns.stripplot(data=real_estate_data, x='mainroad', y='price', ax=axes[2, 0])
+axes[2, 0].set_title('Mainroad vs Price')
+
+sns.stripplot(data=real_estate_data, x='parking', y='price', ax=axes[2, 1])
+axes[2, 1].set_title('Parking vs Price')
+
+# Strip plot for furnishingstatus
+fig2, ax2 = plt.subplots(figsize=(6, 5))
+sns.stripplot(data=real_estate_data, x='furnishingstatus', y='price', ax=ax2)
+ax2.set_title('Furnishing Status vs Price')
+
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+plt.show()
+
+# Exclude non-numeric columns creating matrix graphs
+numeric_cols = real_estate_data.select_dtypes(include=['number'])
+
+# Correlation matrix
+correlation_matrix = numeric_cols.corr()
+
+# Plotting the correlation matrix
+plt.figure(figsize=(10, 6))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
+plt.title('Correlation Matrix')
+plt.show()
+
+print(correlation_matrix)
+
+# To find Mean Squared Error and R-Squared 
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+    local_file_path = r"D:\Data\Real_Estate.csv"
+    real_estate_data = pd.read_csv(local_file_path)
+features = ['area', 'bedrooms', 'bathrooms', 'stories', 'mainroad', 'parking', 'furnishingstatus']
+target = 'price'
+
+X = real_estate_data[features]
+y = real_estate_data[target]
+
+# Splitting the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Model initialization
+model = LinearRegression()
+
+# Training the model
+model.fit(X_train, y_train)
+
+# Predicting on the test set
+y_pred = model.predict(X_test)
+
+# Calculating metrics
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+# Printing the results
+print(f"Mean Squared Error: {mse}")
+print(f"R-squared: {r2}")
+
+# Coefficients of the model
+coefficients = pd.DataFrame({'Feature': features, 'Coefficient': model.coef_})
+print(coefficients)
+
+# Creating a graph of Actual vs Predicted Prices
+import matplotlib.pyplot as plt
+
+# Selecting features and target variable
+features = ['area', 'bedrooms', 'bathrooms', 'stories', 'mainroad', 'parking', 'furnishingstatus']
+target = 'price'
+
+X = real_estate_data[features]
+y = real_estate_data[target]
+
+# Splitting the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Model initialization
+model = LinearRegression()
+
+# Training the model
+model.fit(X_train, y_train)
+
+# Predicting on the test set
+y_pred = model.predict(X_test)
+
+# Visualization: Actual vs. Predicted values
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred, alpha=0.5)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=2)
+
+plt.title('Actual vs. Predicted values (Linear Regression)')
+plt.xlabel('Actual House Price')
+plt.ylabel('Predicted House Price')
+
+plt.show()
+
+# Prediction model using Linear Regression with Autoencoder 
+
+#  Data Loading and Preprocessing
+
+# Data Loading
+    import pandas as pd
+
+    local_file_path = r"D:\Data\Real_Estate.csv"
+    real_estate_data = pd.read_csv(local_file_path)
+   
+# Feature Selection
+    features = ['area', 'bedrooms', 'bathrooms', 'stories', 'mainroad', 'parking', 'furnishingstatus']
+    target = 'price'
+
+    X = real_estate_data[features].values
+    y = real_estate_data[target].values
+
+# Normalization
+    from sklearn.preprocessing import StandardScaler
+
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+# Train-Test Split
+   The dataset is split into training and testing sets with a ratio of 80:20 to evaluate the model's performance on unseen data.
+    from sklearn.model_selection import train_test_split
+
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Autoencoder Model
+
+# Autoencoder Definition
+    from tensorflow.keras.models import Model
+    from tensorflow.keras.layers import Input, Dense, Dropout
+
+    input_dim = X_train.shape[1]
+    encoding_dim = 4   Number of dimensions in the latent space
+
+    input_layer = Input(shape=(input_dim,))
+    encoder = Dense(encoding_dim, activation='relu')(input_layer)
+    encoder = Dropout(0.2)(encoder)
+    decoder = Dense(input_dim, activation='linear')(encoder)
+
+    autoencoder = Model(inputs=input_layer, outputs=decoder)
+    autoencoder.compile(optimizer='adam', loss='mse')
+    
+
+# Training the Autoencoder
+  
+    autoencoder.fit(X_train, X_train, epochs=100, batch_size=16, shuffle=True, validation_split=0.2, verbose=0)
+    
+# Encoding the Data
+
+    encoder_model = Model(inputs=input_layer, outputs=encoder)
+
+    X_train_encoded = encoder_model.predict(X_train)
+    X_test_encoded = encoder_model.predict(X_test)
+    
+ # Regression Model
+# Gradient Boosting Regressor
+  from sklearn.ensemble import GradientBoostingRegressor
+
+    gbr_model = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)
+    gbr_model.fit(X_train_encoded, y_train)
+    
+
+# Prediction and Evaluation
+    from sklearn.metrics import mean_squared_error, r2_score
+    import matplotlib.pyplot as plt
+
+    y_pred_gbr = gbr_model.predict(X_test_encoded)
+    mse = mean_squared_error(y_test, y_pred_gbr)
+    r2 = r2_score(y_test, y_pred_gbr)
+
+    print(f'Mean Squared Error: {mse}')
+    print(f'R-squared: {r2}')
+
+     Visualization: Actual vs. Predicted values
+    plt.figure(figsize=(10, 6))
+    plt.scatter(y_test, y_pred_gbr, alpha=0.5, color='blue')
+    plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=2)
+    plt.title('Actual vs. Predicted values (Gradient Boosting with Autoencoder)')
+    plt.xlabel('Actual House Price')
+    plt.ylabel('Predicted House Price')
+    plt.show()
+   
+Iteration 1 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Dense, Dropout
+
+# Load the data
+local_file_path = r"D:\Data\Real_Estate.csv"
+real_estate_data = pd.read_csv(local_file_path)
+
+# Feature selection
+features = ['area', 'bedrooms', 'bathrooms', 'stories', 'mainroad', 'parking', 'furnishingstatus']
+target = 'price'
+
+X = real_estate_data[features].values
+y = real_estate_data[target].values
+
+# Normalize the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Define a function to build and train an autoencoder with different hyperparameters
+def build_autoencoder(input_dim, encoding_dim, dropout_rate, layers):
+    input_layer = Input(shape=(input_dim,))
+    
+    # Add hidden layers
+    x = input_layer
+    for units in layers:
+        x = Dense(units, activation='relu')(x)
+        x = Dropout(dropout_rate)(x)
+    
+    # Encoding layer
+    encoder = Dense(encoding_dim, activation='relu')(x)
+    
+    # Decoding layer
+    decoder = Dense(input_dim, activation='linear')(encoder)
+    
+    # Autoencoder model
+    autoencoder = Model(inputs=input_layer, outputs=decoder)
+    autoencoder.compile(optimizer='adam', loss='mse')
+    
+    return autoencoder, Model(inputs=input_layer, outputs=encoder)
+
+# Set hyperparameters
+input_dim = X_train.shape[1]
+encoding_dim = 4
+dropout_rate = 0.2
+layers = [64, 32]  # You can experiment with different layers and sizes
+
+# Build and train the autoencoder
+autoencoder, encoder_model = build_autoencoder(input_dim, encoding_dim, dropout_rate, layers)
+autoencoder.fit(X_train, X_train, epochs=100, batch_size=16, shuffle=True, validation_split=0.2, verbose=0)
+
+# Encode the data
+X_train_encoded = encoder_model.predict(X_train)
+X_test_encoded = encoder_model.predict(X_test)
+
+# Train the regression model with the encoded data
+gbr_model = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)
+gbr_model.fit(X_train_encoded, y_train)
+
+# Predict and evaluate the model
+y_pred_gbr = gbr_model.predict(X_test_encoded)
+mse = mean_squared_error(y_test, y_pred_gbr)
+r2 = r2_score(y_test, y_pred_gbr)
+
+print(f'Mean Squared Error: {mse}')
+print(f'R-squared: {r2}')
+
+# Visualization: Actual vs. Predicted values
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred_gbr, alpha=0.5, color='blue')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=2)
+plt.title('Actual vs. Predicted values (Gradient Boosting with Autoencoder)')
+plt.xlabel('Actual House Price')
+plt.ylabel('Predicted House Price')
+plt.show()
+Iteration 2
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Dense, Dropout
+
+# Load the data
+local_file_path = r"D:\Data\Real_Estate.csv"
+real_estate_data = pd.read_csv(local_file_path)
+
+# Feature selection
+features = ['area', 'bedrooms', 'bathrooms', 'stories', 'mainroad', 'parking', 'furnishingstatus']
+target = 'price'
+
+X = real_estate_data[features].values
+y = real_estate_data[target].values
+
+# Normalize the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Define a function to build and train an autoencoder with different hyperparameters
+def build_autoencoder(input_dim, encoding_dim, dropout_rate, layers):
+    input_layer = Input(shape=(input_dim,))
+    
+    # Add hidden layers
+    x = input_layer
+    for units in layers:
+        x = Dense(units, activation='relu')(x)
+        x = Dropout(dropout_rate)(x)
+    
+    # Encoding layer
+    encoder = Dense(encoding_dim, activation='relu')(x)
+    
+    # Decoding layer
+    decoder = Dense(input_dim, activation='linear')(encoder)
+    
+    # Autoencoder model
+    autoencoder = Model(inputs=input_layer, outputs=decoder)
+    autoencoder.compile(optimizer='adam', loss='mse')
+    
+    return autoencoder, Model(inputs=input_layer, outputs=encoder)
+# Variation 1: Deeper Network with More Layers and Neurons
+
+# Set hyperparameters
+input_dim = X_train.shape[1]
+encoding_dim = 8  # Larger encoding dimension for more complex representation
+dropout_rate = 0.3  # Higher dropout rate to prevent overfitting
+layers = [128, 64, 32]  # More layers with larger number of neurons
+
+# Build and train the autoencoder
+autoencoder_v1, encoder_model_v1 = build_autoencoder(input_dim, encoding_dim, dropout_rate, layers)
+autoencoder_v1.fit(X_train, X_train, epochs=100, batch_size=16, shuffle=True, validation_split=0.2, verbose=0)
+
+# Encode the data
+X_train_encoded_v1 = encoder_model_v1.predict(X_train)
+X_test_encoded_v1 = encoder_model_v1.predict(X_test)
+
+# Train the regression model with the encoded data
+gbr_model_v1 = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)
+gbr_model_v1.fit(X_train_encoded_v1, y_train)
+
+# Predict and evaluate the model
+y_pred_gbr_v1 = gbr_model_v1.predict(X_test_encoded_v1)
+mse_v1 = mean_squared_error(y_test, y_pred_gbr_v1)
+r2_v1 = r2_score(y_test, y_pred_gbr_v1)
+
+print(f'Variation 1 - Mean Squared Error: {mse_v1}')
+print(f'Variation 1 - R-squared: {r2_v1}')
+
+# Visualization: Actual vs. Predicted values
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred_gbr_v1, alpha=0.5, color='green')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=2)
+plt.title('Actual vs. Predicted values (Variation 1 - Deeper Network)')
+plt.xlabel('Actual House Price')
+plt.ylabel('Predicted House Price')
+plt.show()
+
+Iteration 3
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Dense, Dropout
+
+# Load the data
+local_file_path = r"D:\Data\Real_Estate.csv"
+real_estate_data = pd.read_csv(local_file_path)
+
+# Feature selection
+features = ['area', 'bedrooms', 'bathrooms', 'stories', 'mainroad', 'parking', 'furnishingstatus']
+target = 'price'
+
+X = real_estate_data[features].values
+y = real_estate_data[target].values
+
+# Normalize the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Define a function to build and train an autoencoder with different hyperparameters
+def build_autoencoder(input_dim, encoding_dim, dropout_rate, layers):
+    input_layer = Input(shape=(input_dim,))
+    
+    # Add hidden layers
+    x = input_layer
+    for units in layers:
+        x = Dense(units, activation='relu')(x)
+        x = Dropout(dropout_rate)(x)
+    
+    # Encoding layer
+    encoder = Dense(encoding_dim, activation='relu')(x)
+    
+    # Decoding layer
+    decoder = Dense(input_dim, activation='linear')(encoder)
+    
+    # Autoencoder model
+    autoencoder = Model(inputs=input_layer, outputs=decoder)
+    autoencoder.compile(optimizer='adam', loss='mse')
+    
+    return autoencoder, Model(inputs=input_layer, outputs=encoder)
+# Variation 2: Deeper Network with More Layers and Neurons
+# Variation 2: Shallower Network with Fewer Layers and Neurons
+
+# Set hyperparameters
+input_dim = X_train.shape[1]
+encoding_dim = 3  # Smaller encoding dimension for simpler representation
+dropout_rate = 0.1  # Lower dropout rate to retain more information
+layers = [16, 8]  # Fewer layers with smaller number of neurons
+
+# Build and train the autoencoder
+autoencoder_v2, encoder_model_v2 = build_autoencoder(input_dim, encoding_dim, dropout_rate, layers)
+autoencoder_v2.fit(X_train, X_train, epochs=100, batch_size=16, shuffle=True, validation_split=0.2, verbose=0)
+
+# Encode the data
+X_train_encoded_v2 = encoder_model_v2.predict(X_train)
+X_test_encoded_v2 = encoder_model_v2.predict(X_test)
+
+# Train the regression model with the encoded data
+gbr_model_v2 = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)
+gbr_model_v2.fit(X_train_encoded_v2, y_train)
+
+# Predict and evaluate the model
+y_pred_gbr_v2 = gbr_model_v2.predict(X_test_encoded_v2)
+mse_v2 = mean_squared_error(y_test, y_pred_gbr_v2)
+r2_v2 = r2_score(y_test, y_pred_gbr_v2)
+
+print(f'Variation 2 - Mean Squared Error: {mse_v2}')
+print(f'Variation 2 - R-squared: {r2_v2}')
+
+# Visualization: Actual vs. Predicted values
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred_gbr_v2, alpha=0.5, color='red')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=2)
+plt.title('Actual vs. Predicted values (Variation 2 - Shallower Network)')
+plt.xlabel('Actual House Price')
+plt.ylabel('Predicted House Price')
+plt.show()
+
+Lasso Regression 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import Lasso
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Load and preprocess the data
+local_file_path = r"D:\Data\Real_Estate.csv"
+real_estate_data = pd.read_csv(local_file_path)
+
+# Selecting features and target variable
+features = ['area', 'bedrooms', 'bathrooms', 'stories', 'mainroad', 'parking', 'furnishingstatus']
+target = 'price'
+
+X = real_estate_data[features].values
+y = real_estate_data[target].values
+
+# Normalize the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Splitting the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Train a Lasso regression model
+lasso_model = Lasso(alpha=0.1, random_state=42)
+lasso_model.fit(X_train, y_train)
+
+# Predict and evaluate the model
+y_pred_lasso = lasso_model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred_lasso)
+r2 = r2_score(y_test, y_pred_lasso)
+
+print(f'Mean Squared Error: {mse}')
+print(f'R-squared: {r2}')
+
+# Visualization: Actual vs. Predicted values
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred_lasso, alpha=0.5, color='blue')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=2)
+plt.title('Actual vs. Predicted values (Lasso Regression)')
+plt.xlabel('Actual House Price')
+plt.ylabel('Predicted House Price')
+plt.show()
